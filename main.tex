@@ -24,6 +24,18 @@
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{footline}[frame number]
 
+% --- Auto-insert Section Title Slides ---
+\AtBeginSection[]{
+  \begin{frame}
+    \vfill
+    \centering
+    \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+      \usebeamerfont{title}\insertsectionhead\par%
+    \end{beamercolorbox}
+    \vfill
+  \end{frame}
+}
+
 % Title Information
 \title{Basics of Probability and Statistics}
 \subtitle{Chapter 5 -- Group Presentation}
@@ -32,9 +44,34 @@
 
 \begin{document}
 
-% --- Title ---
-\begin{frame}
-\titlepage
+% --- Custom Title Slide ---
+\begin{frame}[plain]
+    \centering
+    
+    {\Large \textbf{Basics of Probability and Statistics}} \\[6pt]
+    {\large Chapter 5 -- Group Presentation} \\[12pt]
+    
+    % Logo
+    \includegraphics[width=3cm]{nith-logo.png} \\[12pt]
+    
+    {\small Department of Computer Science and Engineering} \\
+    {\small National Institute of Technology Hamirpur} \\[16pt]
+    
+    % Two Column Layout for Presenters
+    \begin{columns}[T]
+        \begin{column}{0.48\textwidth}
+            \centering
+            \textbf{Presented by:} \\
+            Group -- 1 \\
+            22dcs001 to 22dcs007
+        \end{column}
+        
+        \begin{column}{0.48\textwidth}
+            \centering
+            \textbf{Presented to:} \\
+            Dr. Pooja Sharma
+        \end{column}
+    \end{columns}
 \end{frame}
 
 % --- Table of Contents ---
