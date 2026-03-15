@@ -4,93 +4,204 @@
 % ============================================================
 \section{Probability Distributions Used}
 
+% ---- Slide 1: What is a Probability Distribution? ----
+\begin{frame}{What is a Probability Distribution?}
+A \textbf{probability distribution} describes how the values of a random variable are spread or distributed.
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{Discrete Distribution}
+\begin{itemize}
+    \item Defined by a \textbf{PMF} $p(x)$
+    \item Values are countable
+    \item Example: number of heads in 5 coin tosses
+\end{itemize}
+\end{block}
+\column{0.48\textwidth}
+\begin{block}{Continuous Distribution}
+\begin{itemize}
+    \item Defined by a \textbf{PDF} $f(x)$
+    \item Values form an interval
+    \item Example: height of a person
+\end{itemize}
+\end{block}
+\end{columns}
+\vspace{6pt}
+\centering
+\textit{Every ML model either assumes or learns a probability distribution over the data.}
+\end{frame}
+
+% ---- Slide 2: Bernoulli Distribution ----
 \begin{frame}{Bernoulli Distribution}
-Models a single binary outcome (success/failure).
+Models a \textbf{single trial} with two outcomes: success ($X=1$) or failure ($X=0$).
 \[
-X \sim \mathrm{Bernoulli}(p), \quad P(X=1)=p, \;\; P(X=0)=1-p
+X \sim \mathrm{Bernoulli}(p), \quad P(X=1) = p, \;\; P(X=0) = 1-p
 \]
+\textbf{Properties:}
 \begin{itemize}
-    \item $\mathbb{E}[X] = p$, \quad $\mathrm{Var}(X) = p(1-p)$.
-    \item \textbf{ML usage:} Binary classification (spam/not-spam), logistic regression output.
-    \item Sigmoid function maps logits to $p \in (0,1)$.
+    \item Mean: $\mathbb{E}[X] = p$
+    \item Variance: $\mathrm{Var}(X) = p(1-p)$
 \end{itemize}
+\begin{exampleblock}{Simple Example}
+A coin has $P(\text{Head}) = 0.6$. Then $X \sim \mathrm{Bernoulli}(0.6)$.\\
+$\mathbb{E}[X] = 0.6$, \quad $\mathrm{Var}(X) = 0.6 \times 0.4 = 0.24$.
+\end{exampleblock}
+\textbf{ML usage:} Logistic regression output $\sigma(z) \in (0,1)$ models a Bernoulli probability.
 \end{frame}
 
+% ---- Slide 3: Binomial Distribution ----
 \begin{frame}{Binomial Distribution}
-Sum of $n$ independent Bernoulli trials.
+Sum of $n$ \textbf{independent} Bernoulli trials, each with success probability $p$.
 \[
-P(X=k) = \binom{n}{k}\, p^k\, (1-p)^{n-k}, \quad k = 0,1,\dots,n
+P(X = k) = \binom{n}{k}\, p^k\, (1-p)^{n-k}, \quad k = 0, 1, \dots, n
 \]
+\textbf{Properties:}
 \begin{itemize}
-    \item $\mathbb{E}[X] = np$, \quad $\mathrm{Var}(X) = np(1-p)$.
-    \item \textbf{ML usage:} Number of correct predictions in $n$ samples.
-    \item Approaches Gaussian for large $n$ (Central Limit Theorem).
+    \item Mean: $\mathbb{E}[X] = np$
+    \item Variance: $\mathrm{Var}(X) = np(1-p)$
+    \item When $n=1$, it reduces to the Bernoulli distribution.
+    \item For large $n$, it approximates a Gaussian (Central Limit Theorem).
+\end{itemize}
+\begin{exampleblock}{Simple Example}
+Toss a fair coin 10 times ($n=10,\; p=0.5$).\\
+Expected heads $= np = 5$, \quad Variance $= np(1-p) = 2.5$.
+\end{exampleblock}
+\end{frame}
+
+% ---- Slide 4: Poisson Distribution ----
+\begin{frame}{Poisson Distribution}
+Models the \textbf{number of events} occurring in a fixed interval of time or space, when events happen at a constant average rate $\lambda$.
+\[
+P(X = k) = \frac{\lambda^k\, e^{-\lambda}}{k!}, \quad k = 0, 1, 2, \dots
+\]
+\textbf{Properties:}
+\begin{itemize}
+    \item Mean: $\mathbb{E}[X] = \lambda$
+    \item Variance: $\mathrm{Var}(X) = \lambda$ \quad (mean = variance!)
+    \item Approximates Binomial when $n$ is large and $p$ is small.
+\end{itemize}
+\begin{exampleblock}{Simple Example}
+A server receives $\lambda = 4$ requests per minute on average.\\
+$P(\text{exactly 2 requests}) = \frac{4^2\, e^{-4}}{2!} = \frac{16 \times 0.0183}{2} \approx 0.1465$
+\end{exampleblock}
+\textbf{ML usage:} Count data modelling, event-rate prediction.
+\end{frame}
+
+% ---- Slide 5: Uniform Distribution ----
+\begin{frame}{Uniform Distribution}
+All values in a range are \textbf{equally likely}.
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{Discrete Uniform}
+\[
+P(X = x_i) = \frac{1}{n}
+\]
+Example: rolling a fair die\\
+$P(X=k)=\frac{1}{6}$ for $k \in \{1,\dots,6\}$
+\end{block}
+\column{0.48\textwidth}
+\begin{block}{Continuous Uniform}
+\[
+f(x) = \frac{1}{b-a}, \quad a \leq x \leq b
+\]
+Mean: $\frac{a+b}{2}$\\[4pt]
+Variance: $\frac{(b-a)^2}{12}$
+\end{block}
+\end{columns}
+\vspace{6pt}
+\textbf{ML usage:}
+\begin{itemize}
+    \item \textbf{Random weight initialisation} in neural networks.
+    \item \textbf{Non-informative prior} in Bayesian inference (all parameter values equally likely).
 \end{itemize}
 \end{frame}
 
+% ---- Slide 6: Gaussian (Normal) Distribution ----
 \begin{frame}{Gaussian (Normal) Distribution}
-\begin{block}{PDF}
+The most important distribution in statistics and machine learning.
+\begin{block}{Probability Density Function}
 \[
 f(x) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)
 \]
 \end{block}
+\textbf{Key Facts:}
 \begin{itemize}
-    \item Parameterised by mean $\mu$ and variance $\sigma^2$.
-    \item Symmetric, bell-shaped curve.
-    \item \textbf{68--95--99.7 rule:} ${\approx}68\%$ within $\pm 1\sigma$, $95\%$ within $\pm 2\sigma$, $99.7\%$ within $\pm 3\sigma$.
-    \item The most important distribution in statistics and ML.
+    \item Parameterised by mean $\mu$ (centre) and variance $\sigma^2$ (spread).
+    \item Symmetric, bell-shaped curve about $\mu$.
+    \item \textbf{68--95--99.7 rule:}
+    \begin{itemize}
+        \item $\approx 68\%$ of data within $\mu \pm 1\sigma$
+        \item $\approx 95\%$ of data within $\mu \pm 2\sigma$
+        \item $\approx 99.7\%$ of data within $\mu \pm 3\sigma$
+    \end{itemize}
+    \item Arises naturally due to the Central Limit Theorem.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Poisson \& Uniform Distributions}
-\begin{columns}[T]
-\column{0.48\textwidth}
-\begin{block}{Poisson Distribution}
+% ---- Slide 7: Standard Normal Distribution & Z-Score ----
+\begin{frame}{Standard Normal Distribution \& Z-Score}
+Any Gaussian $X \sim \mathcal{N}(\mu, \sigma^2)$ can be \textbf{standardised}:
 \[
-P(X=k) = \frac{\lambda^k\, e^{-\lambda}}{k!}
+Z = \frac{X - \mu}{\sigma} \sim \mathcal{N}(0, 1)
 \]
 \begin{itemize}
-    \item Models count of rare events
-    \item $\mathbb{E}[X] = \mathrm{Var}(X) = \lambda$
-    \item ML: event counting, arrival rates
+    \item $Z$ is called the \textbf{standard normal} variable (mean = 0, variance = 1).
+    \item Use a \textbf{Z-table} (or calculator) to find probabilities.
+    \item $P(X \leq x) = \Phi\!\left(\frac{x - \mu}{\sigma}\right)$, where $\Phi$ is the standard normal CDF.
 \end{itemize}
-\end{block}
-\column{0.48\textwidth}
-\begin{block}{Uniform Distribution}
+\begin{exampleblock}{Quick Check}
+If $X \sim \mathcal{N}(100, 25)$ ($\sigma=5$), what is $P(X \leq 110)$?\\[4pt]
+$Z = \frac{110 - 100}{5} = 2.0 \;\Rightarrow\; P(X \leq 110) = \Phi(2.0) = 0.9772$ \quad (97.7\%)
+\end{exampleblock}
+\textbf{ML usage:} Z-score normalisation ($x' = \frac{x-\mu}{\sigma}$) standardises features before training.
+\end{frame}
+
+% ---- Slide 8: Exponential Distribution ----
+\begin{frame}{Exponential Distribution}
+Models the \textbf{time between successive events} in a Poisson process.
 \[
-f(x) = \frac{1}{b-a}, \quad a \leq x \leq b
+f(x) = \lambda\, e^{-\lambda x}, \quad x \geq 0
 \]
+\textbf{Properties:}
 \begin{itemize}
-    \item All values equally likely
-    \item $\mathbb{E}[X] = \frac{a+b}{2}$
-    \item ML: random initialisation, non-informative prior
+    \item Mean: $\mathbb{E}[X] = \frac{1}{\lambda}$, \quad Variance: $\mathrm{Var}(X) = \frac{1}{\lambda^2}$
+    \item \textbf{Memoryless property:} $P(X > s + t \mid X > s) = P(X > t)$
+    \begin{itemize}
+        \item The probability of waiting another $t$ units is the same regardless of how long you have already waited.
+    \end{itemize}
+    \item CDF: $F(x) = 1 - e^{-\lambda x}$
 \end{itemize}
-\end{block}
-\end{columns}
+\begin{exampleblock}{Simple Example}
+If a sensor fails on average every 1000 hours ($\lambda = 0.001$),\\
+$P(\text{survives beyond 500 hrs}) = e^{-0.001 \times 500} = e^{-0.5} \approx 0.607$
+\end{exampleblock}
 \end{frame}
 
-\begin{frame}{Applications of Distributions in ML}
-\begin{enumerate}
-    \item \textbf{Noise Modelling:}
-    \begin{itemize}
-        \item Sensor/measurement noise $\sim \mathcal{N}(0, \sigma^2)$.
-        \item Assuming Gaussian noise leads to MSE loss.
-    \end{itemize}
-    \item \textbf{Feature Distributions:}
-    \begin{itemize}
-        \item Understanding data distribution guides preprocessing choices.
-        \item Gaussian Mixture Models (GMMs) for clustering.
-    \end{itemize}
-    \item \textbf{Bayesian Models:}
-    \begin{itemize}
-        \item Prior distributions encode domain knowledge.
-        \item Posterior distributions capture updated beliefs after observing data.
-        \item Gaussian priors $\Leftrightarrow$ L2 regularisation.
-    \end{itemize}
-\end{enumerate}
+% ---- Slide 9: Summary -- All Distributions at a Glance ----
+\begin{frame}{Summary: Distributions at a Glance}
+\begin{table}[h]
+\centering
+\footnotesize
+\begin{tabular}{l c c c c}
+\toprule
+\textbf{Distribution} & \textbf{Type} & \textbf{Mean} & \textbf{Variance} & \textbf{Use Case}\\
+\midrule
+Bernoulli & Discrete & $p$ & $p(1-p)$ & Binary events\\
+Binomial & Discrete & $np$ & $np(1-p)$ & Count of successes\\
+Poisson & Discrete & $\lambda$ & $\lambda$ & Rare event counts\\
+Uniform & Both & $\frac{a+b}{2}$ & $\frac{(b-a)^2}{12}$ & Initialisation, priors\\
+Gaussian & Continuous & $\mu$ & $\sigma^2$ & Noise, features\\
+Exponential & Continuous & $\frac{1}{\lambda}$ & $\frac{1}{\lambda^2}$ & Wait times\\
+\bottomrule
+\end{tabular}
+\end{table}
+\vspace{4pt}
+\textbf{Key takeaway:} Choosing the right distribution to model your data is one of the most important decisions in building any ML/statistical model.
 \end{frame}
 
-\begin{frame}{Numerical Example: Binomial Distribution}
+% ---- Slide 10: Solved Example -- Binomial ----
+\begin{frame}{Solved Example: Binomial Distribution}
 \begin{exampleblock}{Problem}
 A model has 80\% accuracy ($p=0.8$). In a batch of $n=5$ predictions,\\
 find $P(\text{exactly 4 correct})$ and $P(\text{at least 4 correct})$.
@@ -101,10 +212,11 @@ P(X=4) &= \binom{5}{4}(0.8)^4(0.2)^1 = 5 \times 0.4096 \times 0.2 = \mathbf{0.40
 P(X=5) &= \binom{5}{5}(0.8)^5(0.2)^0 = 1 \times 0.3277 \times 1 = \mathbf{0.3277}\\[6pt]
 P(X \geq 4) &= P(X=4) + P(X=5) = 0.4096 + 0.3277 = \mathbf{0.7373}
 \end{align*}
-$\Rightarrow$ There is a 73.7\% chance of getting 4 or more correct in the batch.
+$\Rightarrow$ There is a \textbf{73.7\%} chance of getting 4 or more correct in the batch.
 \end{frame}
 
-\begin{frame}{Numerical Example: Gaussian Distribution}
+% ---- Slide 11: Solved Example -- Gaussian & Z-Score ----
+\begin{frame}{Solved Example: Gaussian \& Z-Score}
 \begin{exampleblock}{Problem}
 Feature values follow $X \sim \mathcal{N}(\mu=50,\, \sigma^2=25)$, so $\sigma=5$.\\
 Find $P(45 \leq X \leq 60)$.
@@ -116,5 +228,25 @@ P(45 \leq X \leq 60) &= P(-1.0 \leq Z \leq 2.0)\\
                        &= \Phi(2.0) - \Phi(-1.0)\\
                        &= 0.9772 - 0.1587 = \mathbf{0.8185}
 \end{align*}
-$\Rightarrow$ About 81.9\% of feature values fall between 45 and 60.
+$\Rightarrow$ About \textbf{81.9\%} of feature values fall between 45 and 60.
+\end{frame}
+
+% ---- Slide 12: Practice Questions ----
+\begin{frame}{Practice Questions}
+\textbf{Theory Questions:}
+\begin{enumerate}
+    \item What is the difference between a PMF and a PDF? Give one example of each.
+    \item State the 68--95--99.7 rule for the Gaussian distribution. Why is it useful?
+    \item Explain the memoryless property of the Exponential distribution in your own words.
+    \item When does the Binomial distribution approximate a Gaussian? State the condition.
+\end{enumerate}
+
+\vspace{6pt}
+\textbf{Numerical Questions:}
+\begin{enumerate}
+    \item A fair coin is tossed 8 times. Find $P(\text{exactly 5 heads})$. \textit{[Ans: 0.2188]}
+    \item If $X \sim \mathcal{N}(70, 16)$ ($\sigma=4$), find $P(X > 78)$. \textit{[Ans: 0.0228]}
+    \item On average 3 emails arrive per hour ($\lambda=3$). Find $P(\text{no emails in an hour})$. \textit{[Ans: 0.0498]}
+    \item A light bulb lasts on average 200 hours ($\lambda = 0.005$). Find the probability it lasts more than 300 hours. \textit{[Ans: 0.2231]}
+\end{enumerate}
 \end{frame}
